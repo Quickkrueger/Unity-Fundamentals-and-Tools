@@ -23,7 +23,7 @@ namespace MarshallKrueger.Tools.TextInput
         }
         public static bool IsLetter(KeyCode keyCode)
         {
-            if(keyCode > KeyCode.A && keyCode < KeyCode.Z)
+            if(keyCode >= KeyCode.A && keyCode <= KeyCode.Z)
             {
                 return true;
             }
