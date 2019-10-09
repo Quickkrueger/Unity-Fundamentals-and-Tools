@@ -4,60 +4,52 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Interactable : MonoBehaviour
+namespace MarshallKrueger.Tools.Interactable
 {
-    [SerializeField]GameObject interactablePart;
-    string objectTag;
-    bool isInteracting;
-    private void Start()
+    public class Interactable : MonoBehaviour
     {
-        objectTag = tag;
-        isInteracting = false;
-    }
+        protected string objectTag;
+        protected bool interacting;
+        public float interactionDelay;
+        protected string interactionText;
 
-    private void OnGUI()
-    {
-        Event e = Event.current;
-        if (isInteracting && e.isKey)
+        private void Start()
         {
-            if (Input.GetKeyDown(e.keyCode))
+            objectTag = tag;
+            interacting = false;
+            interactionDelay = 1;
+            interactionText = "Press 'E' to interact.";
+        }
+
+        public virtual void Interact()
+        {
+            if (!interacting)
             {
-                KeyCode keyCode = e.keyCode;
-                KeyPressed(keyCode);
+                StartCoroutine(RunInteraction());
             }
         }
-    }
-
-    private void Update()
-    {
         
-    }
-
-    public void BeginInteraction()
-    {
-        StartCoroutine(ToInteraction());
-        
-    }
-
-    public bool CheckInteractionState()
-    {
-        return isInteracting;
-    }
-
-    private IEnumerator ToInteraction()
-    {
-        yield return new WaitWhile(() => Input.GetKey(KeyCode.E));
-        isInteracting = true;
-    }
-
-    private void KeyPressed(KeyCode keyCode)
-    {
-        if (isInteracting)
+        protected virtual IEnumerator RunInteraction()
         {
-            if (Input.anyKeyDown)
-            {
-                interactablePart.GetComponent<Text>().text = TextInputHandler.EditString(interactablePart.GetComponent<Text>().text, keyCode);
-            }
+            interacting = true;
+            yield return new WaitForSeconds(interactionDelay);
+            interacting = false;
         }
+
+        protected virtual void InteractionResult()
+        {
+
+        }
+
+        public bool IsInteracting()
+        {
+            return interacting;
+        }
+
+        public void EnableInteractionText()
+        {
+            InteractionController._instance.EnableInteractionText(interactionText);
+        }
+
     }
 }

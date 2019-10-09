@@ -14,7 +14,7 @@ public class CameraController : MonoBehaviour
     {
         RaycastHit raycastHit;
         if(Physics.Raycast(transform.position, transform.forward, out raycastHit, 3)){
-            if(raycastHit.collider.gameObject.GetComponent<Interactable>() != null)
+            if(raycastHit.collider.gameObject.tag == "Interactable")
             {
                 return raycastHit.collider.gameObject;
             }

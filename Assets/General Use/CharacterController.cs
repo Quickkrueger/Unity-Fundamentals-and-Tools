@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MarshallKrueger.Tools.Interactable;
 
 public class CharacterController : MonoBehaviour
 {
@@ -8,7 +9,6 @@ public class CharacterController : MonoBehaviour
     private Vector3 mouseStartPosition;
     [SerializeField]private CameraController cameraController;
     private GameObject currentInteractable;
-    bool usingInteractable;
 
     void Start()
     {
@@ -19,15 +19,8 @@ public class CharacterController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!usingInteractable)
-        {
             ControlHandler();
             CheckForInteractable();
-        }
-        else
-        {
-            usingInteractable = currentInteractable.GetComponent<Interactable>().CheckInteractionState();
-        }
     }
 
     private void ControlHandler()
@@ -45,6 +38,17 @@ public class CharacterController : MonoBehaviour
     private void CheckForInteractable()
     {
         currentInteractable = cameraController.GetCameraRaycast();
+
+        if(currentInteractable != null && currentInteractable.GetComponent<Interactable>() != null)
+        {
+            currentInteractable.GetComponent<Interactable>().EnableInteractionText();
+            Debug.Log("INTERACTABLE FOUND");
+        }
+        else
+        {
+            InteractionController._instance.DisableInteractionText();
+            currentInteractable = null;
+        }
     }
 
     private void KeyControl()
@@ -52,13 +56,8 @@ public class CharacterController : MonoBehaviour
         GetComponent<Rigidbody>().velocity = (transform.forward * Input.GetAxis("Vertical") + transform.right * Input.GetAxis("Horizontal")) * 5;
         if (Input.GetKeyDown(KeyCode.E) && currentInteractable != null)
         {
-            usingInteractable = true;
-            currentInteractable.GetComponent<Interactable>().BeginInteraction();
+            currentInteractable.GetComponent<Interactable>().Interact();
             Debug.Log("INTERACTED");
-        }
-        if (currentInteractable != null)
-        {
-            usingInteractable = currentInteractable.GetComponent<Interactable>().CheckInteractionState();
         }
     }
 
