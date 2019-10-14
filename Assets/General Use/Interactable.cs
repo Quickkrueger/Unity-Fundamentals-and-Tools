@@ -9,15 +9,14 @@ namespace MarshallKrueger.Tools.Interactable
     public class Interactable : MonoBehaviour
     {
         protected string objectTag;
-        protected bool interacting;
-        public float interactionDelay;
+        [SerializeField] protected bool interacting;
+        [SerializeField]float interactionDelay;
         protected string interactionText;
 
         private void Start()
         {
             objectTag = tag;
             interacting = false;
-            interactionDelay = 1;
             interactionText = "Press 'E' to interact.";
         }
 

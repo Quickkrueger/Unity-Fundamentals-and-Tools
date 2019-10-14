@@ -8,7 +8,7 @@ public class CharacterController : MonoBehaviour
     // Start is called before the first frame update
     private Vector3 mouseStartPosition;
     [SerializeField]private CameraController cameraController;
-    private GameObject currentInteractable;
+    private Interactable currentInteractable;
 
     void Start()
     {
@@ -37,24 +37,27 @@ public class CharacterController : MonoBehaviour
 
     private void CheckForInteractable()
     {
-        currentInteractable = cameraController.GetCameraRaycast();
+        GameObject temp = cameraController.GetCameraRaycast();
+        if (temp != null)
+        {
+            currentInteractable = temp.GetComponent<Interactable>();
 
-        if(currentInteractable != null && currentInteractable.GetComponent<Interactable>() != null)
-        {
-            currentInteractable.GetComponent<Interactable>().EnableInteractionText();
-            Debug.Log("INTERACTABLE FOUND");
-        }
-        else
-        {
-            InteractionController._instance.DisableInteractionText();
-            currentInteractable = null;
+            if (currentInteractable != null)
+            {
+                currentInteractable.EnableInteractionText();
+            }
+            else
+            {
+                InteractionController._instance.DisableInteractionText();
+                currentInteractable = null;
+            }
         }
     }
 
     private void KeyControl()
     {
         GetComponent<Rigidbody>().velocity = (transform.forward * Input.GetAxis("Vertical") + transform.right * Input.GetAxis("Horizontal")) * 5;
-        if (Input.GetKeyDown(KeyCode.E) && currentInteractable != null)
+        if (Input.GetKeyDown(KeyCode.E) && currentInteractable != null && !currentInteractable.IsInteracting())
         {
             currentInteractable.GetComponent<Interactable>().Interact();
             Debug.Log("INTERACTED");
